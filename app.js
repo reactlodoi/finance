@@ -26,3 +26,5 @@ var appController = (function (uiController, financeController) {
     }
   });
 })(uiController, financeController);
+
+// ctrl + shift + j = console
