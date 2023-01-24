@@ -40,7 +40,7 @@ var financeController = (function () {
   }
 
   var data = {
-    allItems: {
+    items: {
       inc: [],
       exp: []
     },
@@ -50,19 +50,38 @@ var financeController = (function () {
     }
   };
 
-  // data.allItems.inc.push(100);
+  // data.items.inc.push(100);
 
+  return {
+    // user iin garaas avsan utguudig object dotor hadgalav. type ruu exp, esvel inc orj irne.
+    addItem: function (type, desc, val){
 
+      var item, id;
+
+      if(data.items[type].length === 0) id = 1;
+      else {
+        id = data.items[type][data.items[type].length - 1].id + 1;
+      }
+
+      if(type === 'inc'){
+        item = new Income(id, desc, val);
+      } else {
+        // type === 'exp'
+        item = new Expense(id, desc, val);
+      }
+      data.items[type].push(item);
+    }
+  };
 
 })();
 
 // program holbogch controller
 var appController = (function (uiController, financeController) {
-
-  var ctrlAddItem = function () {
-    console.log(uiController.getInput());
-    // 1. oruulah ugugdlig delgetsees olj avna
+    var ctrlAddItem = function () {
+  // 1. oruulah ugugdlig delgetsees olj avna
+    var input = uiController.getInput();
     // 2. olj avsan ugugdluude sanhuugin controllert damjuulj tend hadgalna.
+    financeController.addItem(input.type, input.description, input.value);
     // 3. olj avsan ugugdluudee web deer ni tohiroh hesegt gargana.
     // 4. tusviig tootsolno
     // 5. delgetsend etssiin uldegdel tootsoog gargana.
