@@ -218,13 +218,19 @@ var appController = (function (uiController, financeController) {
       // 3. olj avsan ugugdluudee web deer ni tohiroh hesegt gargana.
       uiController.addListItem(item, input.type);
       uiController.clearFields();
-      // 4. tusviig tootsolno
-      financeController.tusuvTsooloh();
-      // 5. etssiin uldegdel 
-      var tusuv = financeController.tusviigAvah();
-      // 6. delgetsend tusviin tootsoog gargana.
-      uiController.tusviigUzuuleh(tusuv);
+      
+      // tusviig shineer tootsoolood delgetsend uzuulne.
+      updateTusuv();
     }
+  };
+
+  var updateTusuv = function(){
+    // 4. tusviig tootsolno
+    financeController.tusuvTsooloh();
+    // 5. etssiin uldegdel 
+    var tusuv = financeController.tusviigAvah();
+    // 6. delgetsend tusviin tootsoog gargana.
+    uiController.tusviigUzuuleh(tusuv);
   };
 
   var setupEventListeners = function (){
@@ -253,14 +259,15 @@ var appController = (function (uiController, financeController) {
           console.log("id : " + id);
           var arr = id.split("-");
           var type = arr[0];
-          var itemId = arr[1]; // parse - zadalj salgah
+          var itemId = parseInt(arr[1]); // parse - zadalj salgah
         
           // 1. Sanhuugin module aas type, id ashiglaad ustgana.
           financeController.deleteItem(type, itemId);
           // 2. Delgets deerees ene elementig ustgana
           uiController.deleteListItem(id);
           // 3. Uldegdel tootsoog shinechilj haruulna
-
+          // Tusviig shineer tootsoolood delgetsend uzuulne.
+          updateTusuv();
         }
     });
   }
