@@ -9,6 +9,11 @@ var uiController = (function () {
     addBtn: ".add__btn",
     incomeList: ".income__list",
     expenseList: ".expenses__list",
+    tusuvLabel: ".budget__value",
+    incomeLabel: ".budget__income--value",
+    expenseLabel: ".budget__expenses--value",
+    percentageLabel: ".budget__expenses--percentage",
+    containerDiv: ".container"
   };
 
   // public services: iife ashiglan module archt aar hj bga uyed public service uude return eer damjuuldag
@@ -53,6 +58,28 @@ var uiController = (function () {
       // }
     },
 
+    tusviigUzuuleh: function(tusuv){
+        document.querySelector(DOMstrings.tusuvLabel).textContent = tusuv.tusuv;
+        document.querySelector(DOMstrings.incomeLabel).textContent = tusuv.totalInc; 
+        document.querySelector(DOMstrings.expenseLabel).textContent = tusuv.totalExp;
+
+        if(tusuv.huvi !== 0){
+          document.querySelector(DOMstrings.percentageLabel).textContent = tusuv.huvi + "%";
+        } else {
+          document.querySelector(DOMstrings.percentageLabel).textContent = tusuv.huvi;
+        }
+        
+    },
+
+    deleteListItem: function (id){
+        // DOM oos tuhain argumentes orj irj bga id tai DIV gsen objectig bariad avchlaa
+        var el = document.getElementById(id);
+
+        // parentNode gsen tulhuur ugeer etseginh elementig DOM oos barij chaddag.
+        // tegeed terniha huuhed geheer uurig ni ustgaj bn 
+        el.parentNode.removeChild(el);
+    },
+
     // item ni bidnii medeelel, type ni orlogo/zarlaga
     addListItem: function (item, type){
     
@@ -60,11 +87,11 @@ var uiController = (function () {
       var html, list;
       if(type === "inc"){
         list = DOMstrings.incomeList;
-        html = '<div class="item clearfix" id="income-%id%"><div class="item__description">$$DESC$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+        html = '<div class="item clearfix" id="inc-%id%"><div class="item__description">$$DESC$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
       }
       else {
         list = DOMstrings.expenseList;
-        html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">$$DESC$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+        html = '<div class="item clearfix" id="exp-%id%"><div class="item__description">$$DESC$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
       }
 
       // Ter html dotroo orlogo zarlagin utguudig REPLACE ahishiglan uurchilj
@@ -137,6 +164,22 @@ var financeController = (function () {
           huvi: data.huvi,
           totalInc: data.totals.inc,
           totalExp: data.totals.exp
+        };
+    },
+
+    // orlogo esvel zarlagaas ali id tai elementig usgtahig argumentar oruulna 
+    deleteItem: function (type, id){
+      
+        // map ni shine husnegtig ids ruu hj ugch bga funkts ym
+        var ids = data.items[type].map(function (el){
+            return el.id;
+        });
+
+        var index = ids.indexOf(id);
+
+        if(index !== -1){
+          // splice ni massive aas element ustgahad ashigladag funkts ym.
+          data.items[type].splice(index, 1);
         }
     },
     // user iin garaas avsan utguudig object dotor hadgalav. type ruu exp, esvel inc orj irne.
@@ -180,7 +223,7 @@ var appController = (function (uiController, financeController) {
       // 5. etssiin uldegdel 
       var tusuv = financeController.tusviigAvah();
       // 6. delgetsend tusviin tootsoog gargana.
-      console.log(tusuv);
+      uiController.tusviigUzuuleh(tusuv);
     }
   };
 
@@ -198,11 +241,39 @@ var appController = (function (uiController, financeController) {
         ctrlAddItem();
       }
     });
+
+    document.querySelector(DOM.containerDiv).addEventListener("click", function(event){
+        // eks icon deer id bhgu tul etseginh id iig avhin tuld parentNode gsen tulhuur ugig ashiglana
+        var id = event.target.parentNode.parentNode.parentNode.parentNode.id;
+        // js ni if ruu gants argument yvuulbal huvirgalt hiiged dotor ni element bval true geed
+        // bhgu, hooson bol false iig butsaadag.
+        // css id ->> exp-1, exp-2 ->> "exp" "1"
+        if(id){
+          // split() funkts ni tuhain temdegter zaaglaj uur tus tus in element bolgoj butsaadag
+          console.log("id : " + id);
+          var arr = id.split("-");
+          var type = arr[0];
+          var itemId = arr[1]; // parse - zadalj salgah
+        
+          // 1. Sanhuugin module aas type, id ashiglaad ustgana.
+          financeController.deleteItem(type, itemId);
+          // 2. Delgets deerees ene elementig ustgana
+          uiController.deleteListItem(id);
+          // 3. Uldegdel tootsoog shinechilj haruulna
+
+        }
+    });
   }
 
   return {
     init: function (){
-        console.log("start app...");
+        console.log("App started...");
+        uiController.tusviigUzuuleh({
+          tusuv: 0,
+          huvi: 0,
+          totalInc: 0,
+          totalExp: 0
+        });
         setupEventListeners();
     }
   }
