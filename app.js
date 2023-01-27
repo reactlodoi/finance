@@ -66,6 +66,20 @@ var uiController = (function () {
         + (unuudur.getMonth() + 1) + " сарын ";
     },
 
+    changeType: function(){
+        var fields = document.querySelectorAll(DOMstrings.inputType + ', ' + DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
+
+        nodeListForeach(fields, function(el){
+
+            // classList ni DOM oos barij avsan element deer DOM dotorh classuud deer class nemj, class  hasah, toggle hiih gsn funktsudig dotroo aguuldag
+            el.classList.toggle("red-focus");
+        });
+
+        document.querySelector(DOMstrings.addBtn).classList.toggle("red");
+        // window.location = "http: //1234.mn/course"; // site ruu usreh zoriulalttai
+        // window global object, bainga bichih ni tuvugtei bdag
+    },
+
     getInput: function () {
       return {
         // DOM oosoo select hj bn
@@ -349,6 +363,9 @@ var appController = (function (uiController, financeController) {
         ctrlAddItem();
       }
     });
+
+    // change ni + uyed zovhon - darahad l event yvagdahaar. + darchaad + darval nuluuluhgu event
+    document.querySelector(DOM.inputType).addEventListener("change", uiController.changeType);
     
     document.querySelector(DOM.containerDiv).addEventListener("click", function(event){
       // eks icon deer id bhgu tul etseginh id iig avhin tuld parentNode gsen tulhuur ugig ashiglana
